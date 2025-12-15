@@ -12,7 +12,14 @@ declare global {
 		// interface PageData {}
 		// interface PageState {}
 		// interface Platform {}
+		interface PrivateEnv {
+			ADMIN_EMAIL: string;
+		}
 	}
+}
+
+declare module '$env/static/private' {
+	export const ADMIN_EMAIL: string;
 }
 
 export {};
