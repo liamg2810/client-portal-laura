@@ -5,3 +5,8 @@ export const HASH_SETTINGS = {
 	outputLen: 32,
 	parallelism: 1
 };
+
+export const Roles = {
+	ADMIN: 'admin',
+	USER: 'user'
+};

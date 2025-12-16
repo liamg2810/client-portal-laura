@@ -1,5 +1,6 @@
 import * as auth from '$lib/server/auth';
 import { CreateUsers } from '$lib/server/hooks/init/CreateDefaultUsers';
+import { CreateRoles } from '$lib/server/hooks/init/CreateRoles';
 import type { Handle, ServerInit } from '@sveltejs/kit';
 
 const handleAuth: Handle = async ({ event, resolve }) => {
@@ -29,5 +30,6 @@ const handleAuth: Handle = async ({ event, resolve }) => {
 export const handle: Handle = handleAuth;
 
 export const init: ServerInit = async () => {
+	await CreateRoles();
 	await CreateUsers();
 };

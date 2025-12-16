@@ -2,7 +2,7 @@ import * as auth from '$lib/server/auth';
 import { HASH_SETTINGS } from '$lib/server/constants/Auth';
 import { db } from '$lib/server/db';
 import * as table from '$lib/server/db/schema';
-import { CreateUser, validateEmail, validatePassword } from '$lib/server/utils/CreateUser';
+import { validateEmail, validatePassword } from '$lib/server/utils/CreateUser';
 import { verify } from '@node-rs/argon2';
 import { fail, redirect } from '@sveltejs/kit';
 import { eq } from 'drizzle-orm';
@@ -46,29 +46,6 @@ export const actions: Actions = {
 		const session = await auth.createSession(sessionToken, existingUser.id);
 		auth.setSessionTokenCookie(event, sessionToken, session.expiresAt);
 
-		return redirect(302, '/demo/lucia');
-	},
-	register: async (event) => {
-		const formData = await event.request.formData();
-		const email = formData.get('email');
-		const password = formData.get('password');
-
-		if (!validateEmail(email)) {
-			return fail(400, { message: 'Invalid email' });
-		}
-		if (!validatePassword(password)) {
-			return fail(400, { message: 'Invalid password' });
-		}
-
-		try {
-			const userId = await CreateUser(email, password);
-
-			const sessionToken = auth.generateSessionToken();
-			const session = await auth.createSession(sessionToken, userId);
-			auth.setSessionTokenCookie(event, sessionToken, session.expiresAt);
-		} catch {
-			return fail(500, { message: 'An error has occurred' });
-		}
-		return redirect(302, '/demo/lucia');
+		return redirect(302, '/');
 	}
 };

@@ -1,4 +1,4 @@
-import { integer, sqliteTable, text } from 'drizzle-orm/sqlite-core';
+import { int, integer, sqliteTable, text } from 'drizzle-orm/sqlite-core';
 
 export const user = sqliteTable('user', {
 	id: text('id').primaryKey(),
@@ -14,6 +14,42 @@ export const session = sqliteTable('session', {
 	expiresAt: integer('expires_at', { mode: 'timestamp' }).notNull()
 });
 
+export const role = sqliteTable('role', {
+	id: int('id').primaryKey({ autoIncrement: true }),
+	name: text('text').notNull()
+});
+
+export const organisation = sqliteTable('organisation', {
+	id: int('id').primaryKey({ autoIncrement: true }),
+	name: text('name').notNull()
+});
+
+export const organisationUser = sqliteTable('organisationUser', {
+	organisation: int('organisation')
+		.references(() => organisation.id)
+		.notNull(),
+	user: text('user')
+		.references(() => user.id)
+		.notNull()
+});
+
+export const userRole = sqliteTable('userRole', {
+	user: text('user')
+		.references(() => user.id)
+		.notNull(),
+	role: int('role')
+		.references(() => role.id)
+		.notNull()
+});
+
 export type Session = typeof session.$inferSelect;
 
 export type User = typeof user.$inferSelect;
+
+export type Role = typeof role.$inferSelect;
+
+export type Organisation = typeof organisation.$inferSelect;
+
+export type OrganisationUser = typeof organisationUser.$inferSelect;
+
+export type UserRole = typeof userRole.$inferSelect;
