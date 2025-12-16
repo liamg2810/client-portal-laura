@@ -1,9 +1,8 @@
 import * as auth from '$lib/server/auth';
 import { HASH_SETTINGS } from '$lib/server/constants/Auth';
-import { EMAIL_REGEX } from '$lib/server/constants/Regex';
 import { db } from '$lib/server/db';
 import * as table from '$lib/server/db/schema';
-import { CreateUser } from '$lib/server/utils/CreateUser';
+import { CreateUser, validateEmail, validatePassword } from '$lib/server/utils/CreateUser';
 import { verify } from '@node-rs/argon2';
 import { fail, redirect } from '@sveltejs/kit';
 import { eq } from 'drizzle-orm';
@@ -73,13 +72,3 @@ export const actions: Actions = {
 		return redirect(302, '/demo/lucia');
 	}
 };
-
-function validateEmail(email: unknown): email is string {
-	return (
-		typeof email === 'string' && email.length >= 3 && email.length <= 254 && EMAIL_REGEX.test(email)
-	);
-}
-
-function validatePassword(password: unknown): password is string {
-	return typeof password === 'string' && password.length >= 6 && password.length <= 255;
-}
