@@ -33,6 +33,7 @@ export default defineConfig({
 
 				test: {
 					name: 'server',
+					mode: 'test',
 					environment: 'node',
 					include: ['src/**/*.{test,spec}.{js,ts}'],
 					exclude: ['src/**/*.svelte.{test,spec}.{js,ts}']

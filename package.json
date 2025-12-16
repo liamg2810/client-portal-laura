@@ -14,7 +14,7 @@
 		"lint": "prettier --check . && eslint .",
 		"test:unit": "vitest",
 		"test": "npm run db:test && npm run test:unit -- --run --mode test && rm test.db",
-		"db:test": "npx dotenv -e .env.test -- drizzle-kit push",
+		"db:test": "npx dotenv -e .env.test -- drizzle-kit push --force",
 		"db:push": "drizzle-kit push",
 		"db:generate": "drizzle-kit generate",
 		"db:migrate": "drizzle-kit migrate",
