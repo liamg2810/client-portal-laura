@@ -1,3 +1,4 @@
+import { relations } from 'drizzle-orm';
 import { int, integer, sqliteTable, text } from 'drizzle-orm/sqlite-core';
 
 export const user = sqliteTable('user', {
@@ -5,6 +6,10 @@ export const user = sqliteTable('user', {
 	email: text('email').notNull().unique(),
 	passwordHash: text('password_hash').notNull()
 });
+
+export const userRelations = relations(user, ({ many }) => ({
+	userRoles: many(userRole)
+}));
 
 export const session = sqliteTable('session', {
 	id: text('id').primaryKey(),
@@ -41,6 +46,17 @@ export const userRole = sqliteTable('userRole', {
 		.references(() => role.id)
 		.notNull()
 });
+
+export const userRoleRelations = relations(userRole, ({ one }) => ({
+	user: one(user, {
+		fields: [userRole.user],
+		references: [user.id]
+	}),
+	role: one(role, {
+		fields: [userRole.role],
+		references: [role.id]
+	})
+}));
 
 export type Session = typeof session.$inferSelect;
 
