@@ -1,8 +1,8 @@
+import * as auth from '$lib/server/auth';
 import { Roles } from '$lib/server/constants/Auth';
-import { Errors } from '$lib/server/constants/Errors';
 import { db } from '$lib/server/db';
 import * as table from '$lib/server/db/schema';
-import { CreateUser, validateEmail, validatePassword } from '$lib/server/utils/CreateUser';
+import { validateEmail } from '$lib/server/utils/CreateUser';
 import { fail, redirect } from '@sveltejs/kit';
 import { eq } from 'drizzle-orm';
 import type { Actions, PageServerLoad } from './$types';
@@ -36,32 +36,33 @@ export const actions: Actions = {
 	createUser: async (event) => {
 		const formData = await event.request.formData();
 		const email = formData.get('email');
-		const password = formData.get('password');
 
 		if (!validateEmail(email)) {
 			return fail(400, {
 				message: 'Invalid email'
 			});
 		}
-		if (!validatePassword(password)) {
-			return fail(400, { message: 'Invalid password (min 6, max 255 characters)' });
+
+		const [check] = await db.select().from(table.user).where(eq(table.user.email, email));
+
+		if (check !== undefined) {
+			return fail(400, {
+				message: 'Email already in use.'
+			});
 		}
 
-		try {
-			await CreateUser(email, password, 'user');
-		} catch (e) {
-			const error = e as Error;
+		await db.update(table.magicLinks).set({ used: true }).where(eq(table.magicLinks.email, email));
 
-			switch (error.message) {
-				case Errors.EMAIL_IN_USE:
-					return fail(400, { message: 'Email is already in use.' });
-				case Errors.INVALID_EMAIL:
-					return fail(400, { message: 'Email is invalid' });
-				case Errors.INVALID_PASSWORD:
-					return fail(400, { message: 'Password is invalid' });
-				default:
-					return fail(400, { message: 'An unknown error occured' });
-			}
+		const linkCode = auth.generateSessionToken();
+
+		try {
+			await db
+				.insert(table.magicLinks)
+				.values({ code: linkCode, expires: new Date(Date.now() + 3_600_000), email });
+
+			return { code: linkCode };
+		} catch {
+			return fail(400, { message: 'An unknown error occured' });
 		}
 	}
 };

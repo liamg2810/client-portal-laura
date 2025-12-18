@@ -73,6 +73,14 @@ export const userRoleRelations = relations(userRole, ({ one }) => ({
 	})
 }));
 
+export const magicLinks = sqliteTable('magicLinks', {
+	id: int('id').primaryKey({ autoIncrement: true }),
+	code: text('code').unique().notNull(),
+	expires: integer('expires', { mode: 'timestamp_ms' }),
+	used: integer('used', { mode: 'boolean' }).default(false),
+	email: text('email').notNull()
+});
+
 export type Session = typeof session.$inferSelect;
 
 export type User = typeof user.$inferSelect;
@@ -84,3 +92,5 @@ export type Organisation = typeof organisation.$inferSelect;
 export type OrganisationUser = typeof organisationUser.$inferSelect;
 
 export type UserRole = typeof userRole.$inferSelect;
+
+export type MagicLinks = typeof magicLinks.$inferSelect;
