@@ -29,6 +29,10 @@ export const organisation = sqliteTable('organisation', {
 	name: text('name').notNull()
 });
 
+export const organistaionRelations = relations(organisation, ({ many }) => ({
+	organistationUsers: many(organisationUser)
+}));
+
 export const organisationUser = sqliteTable('organisationUser', {
 	organisation: int('organisation')
 		.references(() => organisation.id)
@@ -37,6 +41,17 @@ export const organisationUser = sqliteTable('organisationUser', {
 		.references(() => user.id)
 		.notNull()
 });
+
+export const organistationUserRelations = relations(organisationUser, ({ one }) => ({
+	user: one(user, {
+		fields: [organisationUser.user],
+		references: [user.id]
+	}),
+	organisation: one(organisation, {
+		fields: [organisationUser.organisation],
+		references: [organisation.id]
+	})
+}));
 
 export const userRole = sqliteTable('userRole', {
 	user: text('user')

@@ -3,9 +3,3 @@
 
 	let { data }: { data: PageServerData } = $props();
 </script>
-
-{#if data.orgs.length > 0}
-	<p>{data.orgs.length}</p>
-{:else}
-	<p>You are not a member of an organisation</p>
-{/if}

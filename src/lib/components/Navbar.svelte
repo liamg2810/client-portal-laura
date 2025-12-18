@@ -29,7 +29,7 @@
 			<button class="cursor-pointer font-bold">Logout</button>
 		</form>
 		{#if isAdmin}
-			Admin
+			<a href="/admin">Admin</a>
 		{/if}
 	</div>
 </div>
