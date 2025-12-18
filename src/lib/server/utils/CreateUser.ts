@@ -1,18 +1,25 @@
 import { hash } from '@node-rs/argon2';
 import { encodeBase32LowerCase } from '@oslojs/encoding';
+import { eq } from 'drizzle-orm';
 import { HASH_SETTINGS } from '../constants/Auth';
 import { Errors } from '../constants/Errors';
 import { EMAIL_REGEX } from '../constants/Regex';
 import { db } from '../db';
-import { user } from '../db/schema';
+import { role, user, userRole } from '../db/schema';
 
-export async function CreateUser(email: string, password: string) {
+export async function CreateUser(email: string, password: string, r: string) {
 	if (!validateEmail(email)) {
 		throw new Error(Errors.INVALID_EMAIL);
 	}
 
 	if (!validatePassword(password)) {
 		throw new Error(Errors.INVALID_PASSWORD);
+	}
+
+	const [ro] = await db.select().from(role).where(eq(role.name, r));
+
+	if (!ro) {
+		throw new Error();
 	}
 
 	const userId = generateUserId();
@@ -23,6 +30,8 @@ export async function CreateUser(email: string, password: string) {
 	} catch {
 		throw new Error(Errors.EMAIL_IN_USE);
 	}
+
+	await db.insert(userRole).values({ user: userId, role: ro.id });
 
 	return userId;
 }
