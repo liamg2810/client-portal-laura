@@ -21,7 +21,7 @@ export const load: PageServerLoad = async ({ params, locals }) => {
 		return { invalidCode: true };
 	}
 
-	return {};
+	return { email: check.email };
 };
 
 export const actions: Actions = {

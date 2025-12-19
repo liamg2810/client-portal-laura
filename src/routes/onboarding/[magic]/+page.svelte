@@ -15,6 +15,8 @@
 {#if data.invalidCode}
 	<p>The requested magic link is invalid.</p>
 {:else}
+	<p>Welcome {data.email}</p>
+
 	<form method="post" action="?/signup" use:enhance>
 		<h1>Please sign up to access your organisation</h1>
 
