@@ -11,7 +11,7 @@ export async function CreateUsers() {
 	let id: string;
 
 	try {
-		id = await CreateUser(ADMIN_EMAIL, insecure);
+		id = await CreateUser(ADMIN_EMAIL, insecure, Roles.ADMIN);
 	} catch {
 		return;
 	}

@@ -53,6 +53,23 @@ export const organistationUserRelations = relations(organisationUser, ({ one }) 
 	})
 }));
 
+export const message = sqliteTable('message', {
+	id: int('id').primaryKey({ autoIncrement: true }),
+	organisation: int('organisation')
+		.references(() => organisation.id)
+		.notNull(),
+	user: text('user')
+		.references(() => user.id)
+		.notNull(),
+	content: text('content').notNull(),
+	createdAt: integer('created_at', { mode: 'timestamp' }).notNull()
+});
+
+export const messageRelations = relations(message, ({ one }) => ({
+	user: one(user, { fields: [message.user], references: [user.id] }),
+	organisation: one(organisation, { fields: [message.organisation], references: [organisation.id] })
+}));
+
 export const userRole = sqliteTable('userRole', {
 	user: text('user')
 		.references(() => user.id)
@@ -90,6 +107,8 @@ export type Role = typeof role.$inferSelect;
 export type Organisation = typeof organisation.$inferSelect;
 
 export type OrganisationUser = typeof organisationUser.$inferSelect;
+
+export type Message = typeof message.$inferSelect;
 
 export type UserRole = typeof userRole.$inferSelect;
 

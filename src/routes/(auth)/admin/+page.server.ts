@@ -27,9 +27,11 @@ export const load: PageServerLoad = async ({ parent }) => {
 		with: { user: { columns: { id: true, email: true } }, role: true }
 	});
 
+	const orgs = await db.select().from(table.organisation);
+
 	// const users = await db.select({ id: u.id, email: u.email, role: }).from(u);
 
-	return { users };
+	return { users, orgs };
 };
 
 export const actions: Actions = {
@@ -63,6 +65,37 @@ export const actions: Actions = {
 			return { code: linkCode };
 		} catch {
 			return fail(400, { message: 'An unknown error occured' });
+		}
+	},
+	createOrganisation: async (event) => {
+		const form = await event.request.formData();
+		const name = String(form.get('name') || '').trim();
+
+		if (!name) {
+			return fail(400, { message: 'Organisation name is required' });
+		}
+
+		try {
+			await db.insert(table.organisation).values({ name });
+			return { success: true };
+		} catch {
+			return fail(500, { message: 'Failed to create organisation' });
+		}
+	},
+	assignUser: async (event) => {
+		const form = await event.request.formData();
+		const userId = String(form.get('user'));
+		const orgId = Number(form.get('organisation'));
+
+		if (!userId || !orgId) {
+			return fail(400, { message: 'User and organisation must be provided' });
+		}
+
+		try {
+			await db.insert(table.organisationUser).values({ user: userId, organisation: orgId });
+			return { success: true };
+		} catch {
+			return fail(500, { message: 'Failed to assign user to organisation' });
 		}
 	}
 };

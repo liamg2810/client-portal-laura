@@ -64,3 +64,47 @@ Current Users:
 		{/each}
 	</tbody>
 </table>
+
+<hr class="my-4" />
+
+<!-- Organisation creation -->
+<h2>Create Organisation</h2>
+<form method="post" action="?/createOrganisation" use:enhance>
+	<input name="name" type="text" placeholder="Organisation name" class="rounded-md" />
+	<button class="cursor-pointer rounded-md bg-green-500 px-4 py-2 text-white hover:bg-green-600"
+		>Create</button
+	>
+</form>
+
+<hr class="my-4" />
+
+<!-- Assign user to organisation -->
+<h2>Assign User to Organisation</h2>
+<form method="post" action="?/assignUser" use:enhance>
+	<select name="user" class="rounded-md">
+		<option value="">Select user</option>
+		{#each data.users as u}
+			<option value={u.user.id}>{u.user.email}</option>
+		{/each}
+	</select>
+
+	<select name="organisation" class="rounded-md">
+		<option value="">Select organisation</option>
+		{#each data.orgs as o}
+			<option value={o.id}>{o.name}</option>
+		{/each}
+	</select>
+
+	<button class="cursor-pointer rounded-md bg-yellow-500 px-4 py-2 text-white hover:bg-yellow-600"
+		>Assign</button
+	>
+</form>
+
+<hr class="my-4" />
+
+<h2>Organisations</h2>
+<ul>
+	{#each data.orgs as o}
+		<li><a href={`/org/${o.id}`}>{o.name}</a></li>
+	{/each}
+</ul>

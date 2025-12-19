@@ -10,7 +10,7 @@ describe('CreateUser.ts', () => {
 
 	it('User should be created with correct information', async () => {
 		const email = 'createUser@test.com';
-		let id = await CreateUser(email, password);
+		let id = await CreateUser(email, password, 'user');
 
 		expect(id).toBeDefined();
 
@@ -33,7 +33,7 @@ describe('CreateUser.ts', () => {
 		}
 
 		try {
-			await CreateUser(email, password);
+			await CreateUser(email, password, 'user');
 		} catch (e) {
 			const error = e as Error;
 			expect(error.message).toBe(Errors.EMAIL_IN_USE);
@@ -45,7 +45,7 @@ describe('CreateUser.ts', () => {
 
 		try {
 			// This should be an accepted password
-			const id = await CreateUser(email, 'aaaaaa');
+			const id = await CreateUser(email, 'aaaaaa', 'user');
 			expect(id).toBeDefined();
 		} catch (e) {
 			// We dont want to be here so we fail the test
@@ -54,7 +54,7 @@ describe('CreateUser.ts', () => {
 
 		try {
 			// This should be a rejected password
-			await CreateUser(email, 'aaaaa');
+			await CreateUser(email, 'aaaaa', 'user');
 		} catch (e) {
 			const error = e as Error;
 			expect(error.message).toBe(Errors.INVALID_PASSWORD);
@@ -66,7 +66,7 @@ describe('CreateUser.ts', () => {
 
 		try {
 			// This password should be accepted
-			const id = await CreateUser(email, 'a'.repeat(255));
+			const id = await CreateUser(email, 'a'.repeat(255), 'user');
 			expect(id).toBeDefined();
 		} catch (e) {
 			expect(e).toBeUndefined();
@@ -74,7 +74,7 @@ describe('CreateUser.ts', () => {
 
 		try {
 			// This password should be rejected for being too long
-			await CreateUser(email, 'a'.repeat(256));
+			await CreateUser(email, 'a'.repeat(256), 'user');
 		} catch (e) {
 			const error = e as Error;
 			expect(error.message).toBe(Errors.INVALID_PASSWORD);
